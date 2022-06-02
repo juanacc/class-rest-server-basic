@@ -14,11 +14,11 @@ const getUsers = (req = request, res = response) => {
 };
 
 const postUsers = (req, res = response) => {
-  const { name, age } = req.body;
+  const body = req.body;
+
   res.json({
     msg: 'post API - controller',
-    name,
-    age
+    body
   });
 };
 
