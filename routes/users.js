@@ -1,12 +1,13 @@
-const { Router } = require('express');
-const { getUsers, putUsers, postUsers, deleteUsers, patchUsers } = require('../controllers/users');
+const {Router} = require('express');
+const {getUsers, putUsers, postUsers, deleteUsers, patchUsers} = require('../controllers/users');
+const {validateUserCreation} = require('../middlewares/userCreation');
 const router = Router();
 
 router.get('/', getUsers);
 
 router.put('/:id', putUsers);
 
-router.post('/', postUsers);
+router.post('/', validateUserCreation, postUsers);
 
 router.delete('/', deleteUsers);
 
