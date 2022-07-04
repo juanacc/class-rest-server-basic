@@ -2,18 +2,18 @@ const {response, request} = require('express');
 const {encryptPassword} = require('../helpers/encryptPassword/handleEncryptions');
 const {create, update} = require('../services/users');
 const {success} = require('../helpers/response/index');
+const userService = require('../services/users');
 
-exports.getUsers = (req = request, res = response) => {
-  const query = req.query;
-  const { name, key, lastName = 'No last name' } = req.query;
-
-  res.json({
-    msg: 'get API - controller',
-    query,
-    name,
-    key,
-    lastName
-  });
+exports.getUsers = async (req = request, res = response) => {
+  const {from = 0, limit = 5} = req.query;
+  
+  // const [total, users] = await Promise.all([
+  //   User.count({state: true}),
+  //   User.find({state: true}).skip(from).limit(limite)
+  // ]);
+  
+  const users = await userService.get(from,limit, {state: true});
+  res.json(success({total: users.length, users: users}));
 };
 
 exports.postUsers = async (req, res = response) => {
@@ -27,7 +27,7 @@ exports.postUsers = async (req, res = response) => {
 
 exports.putUsers = async (req, res = response) => {
   const id = req.params.id;
-  const {password, google, email, ...data} = req.body;
+  const {_id, password, google, email, ...data} = req.body;
   if(password){
     data.password = encryptPassword(password);
   }
@@ -41,8 +41,11 @@ exports.patchUsers = (req, res = response) => {
   });
 };
 
-exports.deleteUsers = (req, res = response) => {
+exports.deleteUser = async (req, res = response) => {
+  //Se hace una eliminacion logica
+  const {id} = req.params;
+  const deletedUser = await update(id, {state: false});
   res.json({
-    msg: 'delete API - controller'
+    deletedUser
   });
 };

@@ -7,10 +7,17 @@ exports.roleValidator = async (role = '') => {
         throw new Error(`El rol ${role} es invalido`);
 }
 
-exports.existUser = async (email) => {
+exports.existUser = async (email = '') => {
     const existUser = await userService.find(email);
     if(existUser){
         console.log('Existing user', existUser);
         throw new Error(`The user with email ${email} is already registered`);
+  }
+}
+
+exports.existUserById = async (id) => {
+    const existUser = await userService.findById(id);
+    if(!existUser){
+        throw new Error(`The user with ID ${id} does not exist`);
   }
 }

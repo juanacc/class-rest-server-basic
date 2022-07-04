@@ -6,3 +6,4 @@ exports.emailError = 'The email is required';
 exports.passwordError = 'The password is required';
 exports.roleError =  role => internalServerError(`The role ${role} is not valid`);
 exports.requestError = errorsArr => badRequest(errorsArr); 
+exports.idError = 'The ID is not valid';

@@ -1,6 +1,6 @@
 const { check, validationResult } = require('express-validator');
 const errors = require('../helpers/errors/index');
-const {roleValidator,existUser} = require('../helpers/validators/validators')
+const {roleValidator, existUser, existUserById} = require('../helpers/validators/validators')
 
 const validateFields = (req, res, next) => {
     const err = validationResult(req);
@@ -26,5 +26,20 @@ exports.validateUserCreation = [
         .isEmpty(),
     //check('role').custom((role)=> roleValidator(role)), cuando tenemos un callback al que se le envia el argumento que estoy recibiendo de custom, se puede simplificar como en la linea siguiente
     check('role').custom(roleValidator),
+    validateFields
+];
+
+exports.validateUserUpdate = [
+    check('id', errors.idError)
+        .isMongoId(),
+    check('id').custom(existUserById),
+    check('role').custom(roleValidator),
+    validateFields
+];
+
+exports.validateUserDelete = [
+    check('id', errors.idError)
+        .isMongoId(),
+    check('id').custom(existUserById),
     validateFields
 ];
