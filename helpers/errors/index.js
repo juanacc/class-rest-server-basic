@@ -7,3 +7,7 @@ exports.passwordError = 'The password is required';
 exports.roleError =  role => internalServerError(`The role ${role} is not valid`);
 exports.requestError = errorsArr => badRequest(errorsArr); 
 exports.idError = 'The ID is not valid';
+exports.loginError = 'Incorrect username or password';
+exports.userDeleted = 'User Deleted';
+exports.generateTokenError = 'Failed to generate token';
+exports.missingToken = 'There is no token in the request';

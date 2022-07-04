@@ -1,5 +1,17 @@
+const {validationResult} = require('express-validator');
 const userService = require('../../services/users');
 const roleService = require('../../services/roles');
+const errors = require('../../helpers/errors/index');
+
+exports.validateFields = (req, res, next) => {
+    const err = validationResult(req);
+    if (!err.isEmpty()) {
+      console.log('ERRORS: ',err.mapped());
+      res.status(400).send(errors.requestError(err.mapped()));
+      return;
+    }
+    next();
+};
 
 exports.roleValidator = async (role = '') => {
     const existRole = await roleService.find(role);

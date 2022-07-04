@@ -11,3 +11,5 @@ exports.badRequest = (data) =>
   
 exports.internalServerError = (data = {}) =>
     formatResponse(500, data);
+
+exports.unAuthorized = data => formatResponse(401, data); 

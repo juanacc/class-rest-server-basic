@@ -1,16 +1,6 @@
-const { check, validationResult } = require('express-validator');
+const {check} = require('express-validator');
 const errors = require('../helpers/errors/index');
-const {roleValidator, existUser, existUserById} = require('../helpers/validators/validators')
-
-const validateFields = (req, res, next) => {
-    const err = validationResult(req);
-    if (!err.isEmpty()) {
-      console.log('ERRORS: ',err.mapped());
-      res.status(400).send(errors.requestError(err.mapped()));
-      return;
-    }
-    next();
-};
+const {roleValidator, existUser, existUserById, validateFields} = require('../helpers/validators/validators')
 
 exports.validateUserCreation = [
     check('name', errors.nameError)
