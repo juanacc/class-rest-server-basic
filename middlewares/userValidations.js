@@ -1,5 +1,7 @@
+const { request, response } = require('express');
 const {check} = require('express-validator');
 const errors = require('../helpers/errors/index');
+const {badRequest, unAuthorized} = require('../helpers/response');
 const {roleValidator, existUser, existUserById, validateFields} = require('../helpers/validators/validators')
 
 exports.validateUserCreation = [
@@ -33,3 +35,41 @@ exports.validateUserDelete = [
     check('id').custom(existUserById),
     validateFields
 ];
+
+exports.userExistInDB = (req=request, res=response, next) => {
+    if(!req.user){
+        return res.status(401).json(unAuthorized(errors.nonexistentUser));
+    }
+    next();
+}
+
+exports.isActiveUser = (req=request, res=response, next) => {
+    if(!req.user.state){
+        return res.status(401).json(unAuthorized(errors.invalidToken));
+    }
+    next();
+}
+
+exports.isAdmin = (req=request, res=response, next) => {
+    if(!req.user){
+        return res.status(500).json({msg: 'The token was not validated'});
+    }
+    const {role} = req.user;
+    if(role !== 'ADMIN_ROLE'){
+        return res.status(401).json(unAuthorized(errors.invalidRole));
+    }
+
+    next();
+}
+
+exports.hasARole = (...roles) => {
+    return (req=request, res=response, next) => {
+        if(!req.user){
+            return res.status(500).json({msg: 'The token was not validated'});
+        }
+        if(!roles.includes(req.user.role)){
+            return res.status(401).json(unAuthorized(errors.invalidRole));
+        }
+        next();
+    }
+}

@@ -11,3 +11,6 @@ exports.loginError = 'Incorrect username or password';
 exports.userDeleted = 'User Deleted';
 exports.generateTokenError = 'Failed to generate token';
 exports.missingToken = 'There is no token in the request';
+exports.invalidToken = 'Invalid token';
+exports.nonexistentUser = 'Nonexistent user';
+exports.invalidRole = 'The user does not have the corresponding role';

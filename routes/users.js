@@ -1,6 +1,13 @@
 const {Router} = require('express');
-const { isAuthenticate } = require('../middlewares/authValidators');
-const {validateUserCreation, validateUserUpdate, validateUserDelete} = require('../middlewares/userValidations');
+const {
+    isAuthenticate,
+    validateUserCreation,
+    validateUserUpdate,
+    validateUserDelete,
+    isActiveUser,
+    userExistInDB,
+    hasARole
+} = require('../middlewares');
 const {getUsers, putUsers, postUsers, deleteUser, patchUsers} = require('../controllers/users');
 const router = Router();
 
@@ -10,7 +17,7 @@ router.put('/:id', validateUserUpdate,putUsers);
 
 router.post('/', validateUserCreation, postUsers);
 
-router.delete('/:id', [isAuthenticate, validateUserDelete], deleteUser);
+router.delete('/:id', [isAuthenticate, userExistInDB, hasARole('ADMIN_ROLE','ROOT_ROLE'), isActiveUser, validateUserDelete], deleteUser);
 
 router.patch('/', patchUsers);
 
