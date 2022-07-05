@@ -1,26 +1,12 @@
 const {response} = require('express');
-const {getUser} = require('../services/auth');
-const {internalServerError, badRequest} = require('../helpers/response');
-const {loginError,userDeleted} = require('../helpers/errors');
-const {validPassword} = require('../helpers/encryptPassword/handleEncryptions');
+const {success, internalServerError} = require('../helpers/response');
 const {generateJWT} = require('../helpers/jwt');
-const {success} = require('../helpers/response/');
 
 exports.login = async (req, res = response) => {
-    const {email, password} = req.body;
     try {
-        const user = await getUser(email);
-        if(!user){
-            return res.status(400).json(badRequest(loginError));
-        }
-        if(!user.state){
-            return res.status(400).json(badRequest(userDeleted));
-        }
-        if(!validPassword(password, user.password)){
-            return res.status(400).json(badRequest(loginError));
-        }
-        const token = await generateJWT(user.id);
-        res.json(success({token, user}));
+        const {id} = req.user;
+        const token = await generateJWT(id);
+        res.json(success({token, user: req.user}));
     } catch (error) {
         console.log(error);
         res.status(500).json({

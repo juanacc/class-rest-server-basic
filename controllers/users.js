@@ -1,7 +1,6 @@
 const {response, request} = require('express');
-const {encryptPassword} = require('../helpers/encryptPassword/handleEncryptions');
-const {create, update} = require('../services/users');
-const {success} = require('../helpers/response/index');
+const {encryptPassword} = require('../helpers/encryptPassword');
+const {success} = require('../helpers/response');
 const userService = require('../services/users');
 
 exports.getUsers = async (req = request, res = response) => {
@@ -21,7 +20,7 @@ exports.postUsers = async (req, res = response) => {
   //Encriptar password
   userData.password = encryptPassword(userData.password);
   //Crear usuario
-  const user = await create(userData);
+  const user = await userService.create(userData);
   res.json(success(user));
 };
 
@@ -31,7 +30,7 @@ exports.putUsers = async (req, res = response) => {
   if(password){
     data.password = encryptPassword(password);
   }
-  const updatedUser = await update(id, data);
+  const updatedUser = await userService.update(id, data);
   res.json(success(updatedUser));
 };
 
@@ -44,7 +43,7 @@ exports.patchUsers = (req, res = response) => {
 exports.deleteUser = async (req, res = response) => {
   //Se hace una eliminacion logica
   const {id} = req.params;
-  const deletedUser = await update(id, {state: false});
+  const deletedUser = await userService.update(id, {state: false});
   res.json({
     deletedUser
   });

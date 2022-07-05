@@ -1,7 +1,7 @@
 const {validationResult} = require('express-validator');
 const userService = require('../../services/users');
 const roleService = require('../../services/roles');
-const errors = require('../../helpers/errors/index');
+const errors = require('../errors');
 
 exports.validateFields = (req, res, next) => {
     const err = validationResult(req);

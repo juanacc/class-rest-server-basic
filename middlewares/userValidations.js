@@ -1,8 +1,8 @@
 const { request, response } = require('express');
 const {check} = require('express-validator');
-const errors = require('../helpers/errors/index');
-const {badRequest, unAuthorized} = require('../helpers/response');
-const {roleValidator, existUser, existUserById, validateFields} = require('../helpers/validators/validators')
+const errors = require('../helpers/errors');
+const {unAuthorized} = require('../helpers/response');
+const {roleValidator, existUser, existUserById, validateFields} = require('../helpers/validators')
 
 exports.validateUserCreation = [
     check('name', errors.nameError)

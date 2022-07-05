@@ -1,10 +1,11 @@
 const { response, request } = require('express');
 const {check} = require('express-validator');
-const errors = require('../helpers/errors/index');
-const {validateFields} = require('../helpers/validators/validators');
-const {unAuthorized} = require('../helpers/response');
+const errors = require('../helpers/errors');
+const {unAuthorized, badRequest} = require('../helpers/response');
+const {validateFields} = require('../helpers/validators');
 const {verifyToken} = require('../helpers/jwt');
-const {findById} = require('../services/users');
+const {validPassword} = require('../helpers/encryptPassword');
+const {findById, find} = require('../services/users');
 
 exports.validateUserLogin = [
     check('email', errors.emailError)
@@ -16,6 +17,25 @@ exports.validateUserLogin = [
         .isEmpty(),
     validateFields
 ];
+
+exports.existUser = async (req = request, res = response, next) => {
+    const {email} = req.body;
+    const user = await find(email);
+    if(!user){
+        return res.status(400).json(badRequest(errors.loginError));
+    }
+    req.user = user;
+    next();
+}
+
+exports.isValidPassword = (req = request, res = response, next) => {
+    const {password} = req.body;
+    const userPassword = req.user.password;
+    if(!validPassword(password, userPassword)){
+        return res.status(400).json(badRequest(errors.loginError));
+    }
+    next();
+}
 
 exports.isAuthenticate = async(req = request, res = response, next) => {
     const token = req.header('x-token');
