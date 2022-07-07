@@ -4,8 +4,8 @@ exports.find = async (email) => {
     return await User.findOne({email});
 };
 
-exports.create = async ({name, email, password, role}) => {
-    const user = new User({name, email, password, role});
+exports.create = async ({name, email, password, role = 'USER_ROLE', img_url = '', google = false}) => {
+    const user = new User({name, email, password, role, img_url, google});
     return await user.save();
 }
 

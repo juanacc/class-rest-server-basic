@@ -1,12 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Google Sign-in</title>
 </head>
+
 <body>
-    <div style="display: block; margin: auto;  width: 600px; height: 500px; text-align: center; font-family: 'Courier', cursive, sans-serif;"><h1 style="color: 747474">:( Application Error</h1><p style="color:#666">If you are the application administrator, you can access the <a style="color: grey"href="https://app-gdp-eastus-prod.scm.azurewebsites.net/detectors">diagnostic resources</a>.</div>
+    <!-- <div
+        style="display: block; margin: auto;  width: 600px; height: 500px; text-align: center; font-family: 'Courier', cursive, sans-serif;">
+        <h1 style="color: 747474">Google Sign-in</h1>
+    </div> -->
+    <h1 style="color: 747474">Google Sign-in</h1>
+    <div id="g_id_onload" data-client_id="1016531946707-7c9vrl7gsf9tcls2fap55d0tevakh377.apps.googleusercontent.com"
+        data-callback="handleCredentialResponse" data-auto_prompt="false">
+    </div>
+    <div class="g_id_signin" data-type="standard" data-size="large" data-theme="outline" data-text="sign_in_with"
+        data-shape="rectangular" data-logo_alignment="left">
+    </div>
+    <button id="google_signout">
+        Signout
+    </button>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script>
+        function handleCredentialResponse(response) {
+            //Google Token:ID_TOKEN
+            console.log('id_token', response.credential);
+            const body = { id_token: response.credential };
+            fetch('http://localhost:8080/api/auth/google', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(resp => resp.json())
+                .then(resp => {
+                    //seteo el email en el local storage ya que lo necesito para hacer el logout
+                    localStorage.setItem('email', resp.body.user.email);
+                    console.log(resp);
+                })
+                .catch(console.warn);
+        }
+        const button = document.getElementById('google_signout');
+        button.onclick = () => {
+            console.log(google.accounts.id);
+            google.accounts.id.disableAutoSelect();
+            google.accounts.id.revoke(localStorage.getItem('email'), done => {
+                localStorage.clear(); //limpio el correo electronico que tenia almacenado
+                location.reload(); //recargo la pagina
+            });
+        }
+    </script>
 </body>
+
 </html>

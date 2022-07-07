@@ -18,6 +18,13 @@ exports.validateUserLogin = [
     validateFields
 ];
 
+exports.validateIdTokenGoogle = [
+    check('id_token', errors.idTokenGoogleRequired)
+        .not()
+        .isEmpty(),
+    validateFields
+]
+
 exports.existUser = async (req = request, res = response, next) => {
     const {email} = req.body;
     const user = await find(email);

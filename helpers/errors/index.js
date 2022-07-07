@@ -8,9 +8,11 @@ exports.roleError =  role => internalServerError(`The role ${role} is not valid`
 exports.requestError = errorsArr => badRequest(errorsArr); 
 exports.idError = 'The ID is not valid';
 exports.loginError = 'Incorrect username or password';
-exports.userDeleted = 'User Deleted';
+exports.userDeleted = 'User deleted or blocked';
 exports.generateTokenError = 'Failed to generate token';
 exports.missingToken = 'There is no token in the request';
 exports.invalidToken = 'Invalid token';
 exports.nonexistentUser = 'Nonexistent user';
 exports.invalidRole = 'The user does not have the corresponding role';
+exports.idTokenGoogleRequired = 'Google id_token is required';
+exports.googleTokenError = 'Google token could not be verified';

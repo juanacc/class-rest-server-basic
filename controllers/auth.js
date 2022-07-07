@@ -1,6 +1,9 @@
 const {response} = require('express');
-const {success, internalServerError} = require('../helpers/response');
+const userService = require('../services/users');
+const {success, internalServerError, badRequest, unAuthorized} = require('../helpers/response');
 const {generateJWT} = require('../helpers/jwt');
+const {googleVerify} = require('../helpers/google/google-verify');
+const errors = require('../helpers/errors');
 
 exports.login = async (req, res = response) => {
     try {
@@ -12,5 +15,39 @@ exports.login = async (req, res = response) => {
         res.status(500).json({
             msg: internalServerError(error)
         })
+    }
+}
+
+exports.googleSignIn = async (req, res = response) => {
+    const {id_token} = req.body;
+    
+    try {
+        const {name, img_url, email} = await googleVerify(id_token);
+        let user = await userService.find(email);
+        console.log('EXIST USER', user);
+        if(!user){
+            //el usuario no existe, por lo cual tengo que crearlo
+            const data = {
+                name,
+                email,
+                password: ':P',
+                img_url,
+                google: true
+            }
+            user = await userService.create(data);
+            console.log('NEW USER', user);
+        }
+
+        //si el usuario ya existe, pero su state=false(esta eliminado)
+        if(!user.state){
+            return res.status(401).json(unAuthorized(errors.userDeleted));
+        }
+
+        const token = await generateJWT(user.id);
+
+        res.json(success({user, token}));
+    } catch (error) {
+        console.log(error);
+        res.status(400).json(badRequest(errors.googleTokenError));
     }
 }
