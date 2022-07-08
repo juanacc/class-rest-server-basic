@@ -1,19 +1,31 @@
 const { request, response } = require('express');
 const {check} = require('express-validator');
-const errors = require('../helpers/errors');
-const {unAuthorized} = require('../helpers/response');
-const {roleValidator, existUser, existUserById, validateFields} = require('../helpers/validators')
+
+const {
+    unAuthorized,
+    roleValidator,
+    existUser,
+    existUserById,
+    validateFields,
+    nameError,
+    emailError,
+    passwordError,
+    idError,
+    nonexistentUser,
+    invalidToken,
+    invalidRole
+} = require('../helpers');
 
 exports.validateUserCreation = [
-    check('name', errors.nameError)
+    check('name', nameError)
         .not()
         .isEmpty(),
-    check('email', errors.emailError)
+    check('email', emailError)
         .not()
         .isEmpty()
         .isEmail(),
     check('email').custom(existUser),
-    check('password', errors.passwordError)
+    check('password', passwordError)
         .not()
         .isEmpty(),
     //check('role').custom((role)=> roleValidator(role)), cuando tenemos un callback al que se le envia el argumento que estoy recibiendo de custom, se puede simplificar como en la linea siguiente
@@ -22,7 +34,7 @@ exports.validateUserCreation = [
 ];
 
 exports.validateUserUpdate = [
-    check('id', errors.idError)
+    check('id', idError)
         .isMongoId(),
     check('id').custom(existUserById),
     check('role').custom(roleValidator),
@@ -30,7 +42,7 @@ exports.validateUserUpdate = [
 ];
 
 exports.validateUserDelete = [
-    check('id', errors.idError)
+    check('id', idError)
         .isMongoId(),
     check('id').custom(existUserById),
     validateFields
@@ -38,14 +50,14 @@ exports.validateUserDelete = [
 
 exports.userExistInDB = (req=request, res=response, next) => {
     if(!req.user){
-        return res.status(401).json(unAuthorized(errors.nonexistentUser));
+        return res.status(401).json(unAuthorized(nonexistentUser));
     }
     next();
 }
 
 exports.isActiveUser = (req=request, res=response, next) => {
     if(!req.user.state){
-        return res.status(401).json(unAuthorized(errors.invalidToken));
+        return res.status(401).json(unAuthorized(invalidToken));
     }
     next();
 }
@@ -56,7 +68,7 @@ exports.isAdmin = (req=request, res=response, next) => {
     }
     const {role} = req.user;
     if(role !== 'ADMIN_ROLE'){
-        return res.status(401).json(unAuthorized(errors.invalidRole));
+        return res.status(401).json(unAuthorized(invalidRole));
     }
 
     next();
@@ -68,7 +80,7 @@ exports.hasARole = (...roles) => {
             return res.status(500).json({msg: 'The token was not validated'});
         }
         if(!roles.includes(req.user.role)){
-            return res.status(401).json(unAuthorized(errors.invalidRole));
+            return res.status(401).json(unAuthorized(invalidRole));
         }
         next();
     }

@@ -13,9 +13,7 @@ exports.update = async (id, data) => {
     return await User.findByIdAndUpdate(id, data, {new: true}); //{new: true} para que me devuelva el objeto actualizado
 }
 
-exports.findById = async (id) => {
-    return await User.findById(id);
-}
+exports.findById = async id => await User.findById(id);
 
 exports.get = async (from, limit, where) => {
     return await User.find(where).skip(from).limit(limit);

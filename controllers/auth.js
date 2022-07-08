@@ -1,9 +1,16 @@
 const {response} = require('express');
 const userService = require('../services/users');
-const {success, internalServerError, badRequest, unAuthorized} = require('../helpers/response');
-const {generateJWT} = require('../helpers/jwt');
-const {googleVerify} = require('../helpers/google/google-verify');
-const errors = require('../helpers/errors');
+
+const {
+    success,
+    internalServerError,
+    badRequest,
+    unAuthorized,
+    generateJWT,
+    userDeleted,
+    googleTokenError,
+    googleVerify,
+} = require('../helpers');
 
 exports.login = async (req, res = response) => {
     try {
@@ -38,9 +45,9 @@ exports.googleSignIn = async (req, res = response) => {
             console.log('NEW USER', user);
         }
 
-        //si el usuario ya existe, pero su state=false(esta eliminado)
+        //si el usuario ya existe, pero su state=false(esta eliminado) no lo dejo autenticarse
         if(!user.state){
-            return res.status(401).json(unAuthorized(errors.userDeleted));
+            return res.status(401).json(unAuthorized(userDeleted));
         }
 
         const token = await generateJWT(user.id);
@@ -48,6 +55,6 @@ exports.googleSignIn = async (req, res = response) => {
         res.json(success({user, token}));
     } catch (error) {
         console.log(error);
-        res.status(400).json(badRequest(errors.googleTokenError));
+        res.status(400).json(badRequest(googleTokenError));
     }
 }
