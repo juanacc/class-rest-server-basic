@@ -1,6 +1,8 @@
 const {response, request} = require('express');
 const {encryptPassword} = require('../helpers/encryptPassword');
-const {success} = require('../helpers/response');
+const {
+  success,
+} = require('../helpers');
 const userService = require('../services/users');
 
 exports.getUsers = async (req = request, res = response) => {

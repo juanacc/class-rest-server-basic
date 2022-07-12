@@ -1,7 +1,9 @@
 const {request, response} = require('express');
-const {badRequest, success, internalServerError} = require('../helpers/response');
+const {
+    success,
+    internalServerError,
+} = require('../helpers');
 const {categoryService} = require('../services');
-const errors = require('../helpers/errors');
 
 // paginado, mostrar total, populate
 exports.getCategories = async (req = request, res = response) => {
@@ -19,7 +21,7 @@ exports.getCategories = async (req = request, res = response) => {
 exports.getCategory = async (req = request, res = response) => {
     const {id} = req.params;
     try {
-        const category = await categoryService.getAll({id});
+        const category = await categoryService.findById(id);
         res.status(200).json(success(category));
     } catch (error) {
         console.log(error);
@@ -41,11 +43,18 @@ exports.postCategory = async (req = request, res = response) => {
 exports.putCategory = async (req = request, res = response) => {
     const name = req.body.name.toUpperCase(); 
     const id = req.params.id;
-    const updateCategory = await categoryService.update(id, {name});
+    // la categoria se debe actualizar con el usuario due#o del token
+    const data = {
+        name,
+        user: req.user._id
+    }
+    const updateCategory = await categoryService.update(id, data);
     res.status(200).json(success(updateCategory));
 }
 
 // borrado logico
-exports.deleteCategory = (req = request, res = response) => {
-    res.json('delete category');
+exports.deleteCategory = async (req = request, res = response) => {
+    const {id} = req.params;
+    const deletedCategory = await categoryService.update(id, {state: false});
+    res.status(200).json(success(deletedCategory));
 }

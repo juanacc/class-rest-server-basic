@@ -5,18 +5,16 @@ const {
     validateCategoryCreation,
     validateCategory,
     validateCategoryName,
-    validateCategoryExistence} = require('../middlewares');
+    validateCategoryExistence,
+    isAdmin
+} = require('../middlewares');
 
 const router = Router();
 
-// Obtener todas las categorias - paginado - publico
 router.get('/', getCategories);
 
-// Obtener una categoria por id - publico
-// middleware custom para validar el id, se llamara categoryExists, validar id de mongo
-router.get('/:id', validateCategory, getCategory);
+router.get('/:id', [validateCategory, validateCategoryExistence], getCategory);
 
-// Crear categoria - privado - cualquier usuario con un token valido
 router.post('/', [isAuthenticate, validateCategoryCreation, validateCategoryName], postCategory);
 
 // Actualizar categoria por id - cualquier usuario con un token valido - validar id - validar nombre de categoria
@@ -24,6 +22,6 @@ router.put('/:id', [isAuthenticate, validateCategory, validateCategoryExistence,
 
 // Borrar una categoria - privado - solo admin
 // middleware custom para validar el id categoryExists, validar id de mongo
-router.delete('/:id', deleteCategory);
+router.delete('/:id', [isAuthenticate, isAdmin, validateCategory, validateCategoryExistence], deleteCategory);
 
 module.exports = router;
