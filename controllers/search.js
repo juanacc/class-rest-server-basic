@@ -1,4 +1,5 @@
 const {request, response} = require('express');
+const { success } = require('../helpers');
 const {ObjectId} = require('mongoose').Types;
 const {categoryService, userService, productService} = require('../services');
 
@@ -113,8 +114,8 @@ exports.search = async (req = request, res = response) => {
     }
 
     const result = await searchCollections[collection];
-    res.json({
+    res.json(success({
         total: result.length,
         result
-    })
+    }))
 }
