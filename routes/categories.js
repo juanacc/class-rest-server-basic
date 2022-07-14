@@ -3,25 +3,23 @@ const {getCategories, getCategory, postCategory, putCategory, deleteCategory} = 
 const {
     isAuthenticate,
     validateCategoryCreation,
-    validateCategory,
-    validateCategoryName,
-    validateCategoryExistence,
-    isAdmin
+    isAdmin,
+    validateCategoryById,
+    validateCategoryUpdate,
+    validateActiveCategory
 } = require('../middlewares');
 
 const router = Router();
 
 router.get('/', getCategories);
 
-router.get('/:id', [validateCategory, validateCategoryExistence], getCategory);
+router.get('/:id', [validateCategoryById, validateActiveCategory], getCategory);
 
-router.post('/', [isAuthenticate, validateCategoryCreation, validateCategoryName], postCategory);
+router.post('/', [isAuthenticate, validateCategoryCreation], postCategory);
 
 // Actualizar categoria por id - cualquier usuario con un token valido - validar id - validar nombre de categoria
-router.put('/:id', [isAuthenticate, validateCategory, validateCategoryExistence, validateCategoryName], putCategory);
+router.put('/:id', [isAuthenticate, validateActiveCategory, validateCategoryUpdate], putCategory);
 
-// Borrar una categoria - privado - solo admin
-// middleware custom para validar el id categoryExists, validar id de mongo
-router.delete('/:id', [isAuthenticate, isAdmin, validateCategory, validateCategoryExistence], deleteCategory);
+router.delete('/:id', [isAuthenticate, isAdmin, validateCategoryById], deleteCategory);
 
 module.exports = router;

@@ -7,19 +7,17 @@ const {
     existUser,
     existUserById,
     validateFields,
-    nameError,
     emailError,
     passwordError,
-    idError,
     nonexistentUser,
     invalidToken,
-    invalidRole
+    invalidRole,
+    nameError,
+    idError,
 } = require('../helpers');
 
 exports.validateUserCreation = [
-    check('name', nameError)
-        .not()
-        .isEmpty(),
+    check('name', nameError).not().isEmpty(),
     check('email', emailError)
         .not()
         .isEmpty()
@@ -34,16 +32,14 @@ exports.validateUserCreation = [
 ];
 
 exports.validateUserUpdate = [
-    check('id', idError)
-        .isMongoId(),
+    check('id', idError).isMongoId(),
     check('id').custom(existUserById),
     check('role').custom(roleValidator),
     validateFields
 ];
 
 exports.validateUserDelete = [
-    check('id', idError)
-        .isMongoId(),
+    check('id', idError).isMongoId(),
     check('id').custom(existUserById),
     validateFields
 ];

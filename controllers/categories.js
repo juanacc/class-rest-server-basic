@@ -30,7 +30,7 @@ exports.getCategory = async (req = request, res = response) => {
 }
 
 exports.postCategory = async (req = request, res = response) => {
-    const name = req.categoryName;
+    const name = req.body.name.toUpperCase();
     const data = {
         name,
         user: req.user._id

@@ -1,43 +1,34 @@
-const { response, request } = require('express');
 const {check} = require('express-validator');
-const {categoryService} = require('../services');
-
 const {
     validateFields,
-    badRequest,
-    valueAlreadyExists,
-    nonexistentCategory,
+    existCategoryById,
+    existCategoryName,
+    existActiveCategory,
     idError,
-    nameError
+    nameError,
 } = require('../helpers');
 
+exports.validateCategoryById = [
+    check('id', idError).isMongoId(),
+    check('id').custom(existCategoryById),
+    validateFields
+]
+
 exports.validateCategoryCreation = [
-    check('name', nameError)
-        .not()
-        .isEmpty(),
+    check('name', nameError).not().isEmpty(),
+    check('name').custom(existCategoryName),
     validateFields
 ];
 
-exports.validateCategory = [
-    check('id', idError)
-        .isMongoId(),
+exports.validateCategoryUpdate = [
+    check('id', idError).isMongoId(),
+    check('id').custom(existCategoryById),
+    check('name').custom(existCategoryName),
     validateFields
-];
+]
 
-exports.validateCategoryName = async (req = request, res = response, next) => {
-    const name = req.body.name.toUpperCase();
-    const categoryDB = await categoryService.findOne({name: name});
-    if(categoryDB)
-        return res.status(400).json(badRequest(valueAlreadyExists(categoryDB.name)));
-    req.categoryName = name;
-    next();
-}
-
-exports.validateCategoryExistence = async (req = request, res = response, next) => {
-    const {id} = req.params;
-    const categoryDB = await categoryService.findById(id);
-    if(!categoryDB)
-        return res.status(400).json(badRequest(nonexistentCategory));
-    req.category = categoryDB;
-    next();
-}
+exports.validateActiveCategory = [
+    check('id', idError).isMongoId(),
+    check('id').custom(existActiveCategory),
+    validateFields
+]

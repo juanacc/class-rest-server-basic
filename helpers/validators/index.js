@@ -1,5 +1,5 @@
 const {validationResult} = require('express-validator');
-const {userService, roleService} = require('../../services');
+const {userService, roleService, categoryService, productService} = require('../../services');
 const errors = require('../errors');
 
 exports.validateFields = (req, res, next) => {
@@ -31,4 +31,43 @@ exports.existUserById = async (id) => {
   if(!existUser){
     throw new Error(`The user with ID ${id} does not exist`);
   }
+}
+
+exports.existCategoryById = async id => {
+  const existCategory = await categoryService.findById(id);
+  if(!existCategory)
+    throw new Error(`The category with ID ${id} does not exist`);
+}
+
+exports.existCategoryName = async name => {
+  const existCategory = await categoryService.findOne({name: name.toUpperCase()});
+  if(existCategory)
+    throw new Error(`the category named ${name} already exists`);
+}
+
+exports.existActiveCategory = async id => {
+  const existCategory = await categoryService.findById(id)
+  if(!existCategory || !existCategory.state)
+    throw new Error(`The category with id ${id} is not active`);
+}
+
+exports.existActiveProduct = async id => {
+  const existProduct = await productService.findById(id)
+  if(!existProduct || !existProduct.state)
+    throw new Error(`The product with id ${id} is not active`);
+}
+
+exports.existProductById = async id => {
+  const existProduct = await productService.findById(id);
+  if(!existProduct)
+    throw new Error(`The product with ID ${id} does not exist`);
+}
+
+exports.existProductName = async name => {
+  if(name)
+    name = name.toUpperCase();
+  const existProduct = await productService.findOne({name});
+  console.log('PRODUCTO', existProduct);
+  if(existProduct)
+    throw new Error(`the product named ${name} already exists`);
 }
