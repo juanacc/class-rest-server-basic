@@ -1,0 +1,1 @@
+exports.validCollections = ['categories', 'products', 'roles', 'users'];

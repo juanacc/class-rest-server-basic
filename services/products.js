@@ -8,3 +8,4 @@ exports.create = async data => {
     return await product.save();
 }
 exports.update = async (id, data) => await Product.findByIdAndUpdate(id, data, {new: true}); //{new: true} para que me devuelva el objeto actualizado
+exports.findAll = async where => await Product.find(where).populate('category', 'name');

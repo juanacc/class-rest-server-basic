@@ -2,6 +2,8 @@ const User = require('../models/user');
 
 exports.find = async email => await User.findOne({email});
 
+exports.findAll = async where => await User.find(where);
+
 exports.create = async ({name, email, password, role = 'USER_ROLE', img_url = '', google = false}) => {
     const user = new User({name, email, password, role, img_url, google});
     return await user.save();

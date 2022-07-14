@@ -19,3 +19,4 @@ exports.nonexistentCategory = 'Nonexistent category';
 exports.invalidRole = 'The user does not have the corresponding role';
 exports.idTokenGoogleRequired = 'Google id_token is required';
 exports.googleTokenError = 'Google token could not be verified';
+exports.collectionError = collections => `The allowed collections are ${collections}`;
