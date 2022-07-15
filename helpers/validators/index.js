@@ -71,3 +71,11 @@ exports.existProductName = async name => {
   if(existProduct)
     throw new Error(`the product named ${name} already exists`);
 }
+
+exports.allowedCollections = (collection, validCollections = []) => {
+  const isValid = validCollections.includes(collection);
+  if(!isValid){
+    throw new Error(`The ${collection} collection is not allowed. The allowed ones are: ${validCollections}`);
+  }
+  return true;
+}

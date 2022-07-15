@@ -1,9 +1,7 @@
-const {request, response} = require('express');
-const { badRequest, collectionError, validCollections } = require('../helpers');
+const {check} = require('express-validator');
+const { allowedCollections, validateFields } = require('../helpers');
 
-exports.validateCollection = (req = request, res = response, next) => {
-    const {collection} = req.params;
-    if(!validCollections.includes(collection))
-        return res.status(400).json(badRequest(collectionError(validCollections)));
-    next();
-}
+exports.validateCollection = [
+    check('collection').custom(c => allowedCollections(c, ['categories', 'products', 'users'])),
+    validateFields
+]

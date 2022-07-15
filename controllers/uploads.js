@@ -10,3 +10,8 @@ exports.uploadFiles = async (req, res = response) => {
         res.status(400).json(badRequest(error));
     }
 }
+
+exports.updateImage = async (req, res = response) => {
+    const {id, collection} = req.params;
+    res.json({id, collection});
+}

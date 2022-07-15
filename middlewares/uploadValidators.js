@@ -1,5 +1,6 @@
 const {response} = require('express');
-const {badRequest, missingFile, validExtensions, invalidExtension, getExtensionFile} = require('../helpers');
+const {check} = require('express-validator');
+const {badRequest, missingFile, validExtensions, invalidExtension, getExtensionFile, validateFields, idError, allowedCollections} = require('../helpers');
 
 exports.validateFiles = (req, res = response, next) => {
     // !req.files: pregunta si en la request viene la propiedad file
@@ -18,3 +19,9 @@ exports.validateExtension = (req, res = response, next) => {
         return res.status(400).json(badRequest(invalidExtension(validExtensions)));
     next();
 }
+
+exports.validateUploadsUpdate = [
+    check('id', idError).isMongoId(),
+    check('collection').custom(c => allowedCollections(c, ['users', 'products'])),
+    validateFields
+]
