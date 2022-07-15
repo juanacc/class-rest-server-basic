@@ -3,6 +3,7 @@ const userValidators = require('../middlewares/userValidations');
 const categoryValidators = require('../middlewares/categoryValidators');
 const productValidators = require('../middlewares/productValidators');
 const searchValidators = require('../middlewares/searchValidators');
+const uploadValidators = require('../middlewares/uploadValidators');
 
 module.exports = {
     ...authValidators,
@@ -10,4 +11,5 @@ module.exports = {
     ...categoryValidators,
     ...productValidators,
     ...searchValidators,
+    ...uploadValidators,
 }

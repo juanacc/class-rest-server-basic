@@ -4,7 +4,8 @@ const helResponse = require('../helpers/response');
 const helpJWT = require('../helpers/jwt');
 const helpGoogle = require('../helpers/google/google-verify');
 const helpEncryptPassword = require('../helpers/encryptPassword');
-const helpValidCollecction = require('../helpers/validCollection');
+const helpValidNames = require('../helpers/validNames');
+const helpUploadFiles = require('../helpers/uploadFiles');
 
 module.exports = {
     ...helpErrors,
@@ -13,5 +14,6 @@ module.exports = {
     ...helpJWT,
     ...helpGoogle,
     ...helpEncryptPassword,
-    ...helpValidCollecction,
+    ...helpValidNames,
+    ...helpUploadFiles,
 }
