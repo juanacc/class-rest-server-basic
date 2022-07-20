@@ -8,9 +8,8 @@ exports.getExtensionFile = file => {
 
 exports.createFileName = file => uuidv4() + '.' + this.getExtensionFile(file);
 
-exports.uploadFile = (files, folder = '') => {
+exports.uploadFile = (file, folder = '') => {
     return new Promise((resolve, reject) => {
-        const {file} = files;
         const fileName = this.createFileName(file);
         // se arma el path donde quiero colocar el archivo
         // __dirname: apunta a la carpeta que contiene el archivo donde se esta llamando a __dirname, en este caso apunta a la carpeta "controllers"
@@ -24,7 +23,7 @@ exports.uploadFile = (files, folder = '') => {
                 console.log(err)
                 reject(err);
             }
-            resolve()
+            resolve(fileName);
         });
     })
 }
