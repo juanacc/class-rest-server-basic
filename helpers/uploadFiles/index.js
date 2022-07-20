@@ -1,5 +1,8 @@
 const path = require('path');
 const {v4: uuidv4} = require('uuid'); // uso el metodo "v4" que viene de uuid y lo renombro a "uuidv4"
+const cloudinary = require('cloudinary').v2
+
+cloudinary.config(process.env.CLOUDINARY_URL);
 
 exports.getExtensionFile = file => {
     const splitFile = file.name.split('.');
@@ -8,7 +11,8 @@ exports.getExtensionFile = file => {
 
 exports.createFileName = file => uuidv4() + '.' + this.getExtensionFile(file);
 
-exports.uploadFile = (file, folder = '') => {
+//Para subir la imagen al servidor
+exports.uploadFileBkp = (file, folder = '') => {
     return new Promise((resolve, reject) => {
         const fileName = this.createFileName(file);
         // se arma el path donde quiero colocar el archivo
@@ -27,3 +31,14 @@ exports.uploadFile = (file, folder = '') => {
         });
     })
 }
+
+exports.uploadFile = async file => {
+    const {tempFilePath} = file;
+    return await cloudinary.uploader.upload(tempFilePath);
+}
+
+exports.getImgPath = (folder, fileName) => path.join(__dirname, '../../uploads', folder, fileName);
+
+exports.getDefaultImgPath = () => path.join(__dirname, '../../assets/no-image.jpg');
+
+exports.deleteCloudinaryFile = public_id => cloudinary.uploader.destroy(public_id); 
